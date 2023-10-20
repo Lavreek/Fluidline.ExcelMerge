@@ -11,17 +11,20 @@ class ExelController extends Controller
 {
     public function upload(Request $req)
     {
+
         $files = Storage::Files('/exel');
         $fileName = $req->file('file');
-        $count = count($fileName) - 1;
+       if($fileName == null){
+           return view('welcome', ['files' => $files])->withErrors(['error' => 'вы ничего не отправили']);
+       }
         $path = [];
 
 
-        for ($i = 0; $i <= $count; $i++) {
+        for ($i = 0; $i <= count($fileName) - 1; $i++) {
             if (str_contains($fileName[$i]->getClientOriginalName(), '.xlsx')) {
                 $path[] = Storage::putFileAs('exel', $req->file('file')[$i], $fileName[$i]->getClientOriginalName());
             } else {
-                return view('welcome', ['files' => $files])->withErrors(['error' => 'Файлы не xlsx']);
+                return view('welcome', ['files' => $files])->withErrors(['error' => 'Файлы не xlsx или вы ничего не отправили']);
             }
         }
         if ($path) {
@@ -29,13 +32,13 @@ class ExelController extends Controller
         } else {
             return view('welcome', ['files' => $files])->withErrors(['error' => 'ошибка при сохранении файла']);
         }
-
-        for($i = 0;$i <=count($files)-1;$i++){
-            if(!str_contains($files[$i], 'f.xlsx')) {
-                Storage::delete($files[$i]);
+        $megafiles = Storage::Files('/exel');
+        for($i = 0;$i <=count($megafiles)-1;$i++){
+            if(!str_contains($megafiles[$i], 'f.xlsx')) {
+                Storage::delete($megafiles[$i]);
             }
         }
-        $realfiles =Storage::Files('/exel');
+        $realfiles = Storage::Files('/exel');
         return view('welcome', ['files' => $realfiles])->with('success', 'файл загружен успешно');
 
     }
