@@ -17,5 +17,5 @@ Route::get('/', function () {
     $files = Storage::Files('/exel');
     return view('welcome',['files' => $files]);
 });
-Route::post('/upload', '\App\Http\Controllers\ExelController@upload');
-Route::get('/Download/', '\App\Http\Controllers\ExelController@download');
+Route::post('/upload', '\App\Http\Controllers\ExcelController@upload');
+Route::get('/Download/', '\App\Http\Controllers\ExcelController@download');
