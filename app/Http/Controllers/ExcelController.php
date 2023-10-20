@@ -7,17 +7,10 @@ use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Http\Controllers\FileHandler;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 use Symfony\Component\Routing\Annotation\Route;
 
-class Controller extends AbstractController
-{
-    #[Route(path: '/', name: '')]
-    public function someAction($name)
-    {
 
-   }
-}
 
 class ExcelController extends Controller
 {
@@ -44,7 +37,7 @@ class ExcelController extends Controller
 
         for ($i = 0; $i <= count($fileName) - 1; $i++) {
             if (str_contains($fileName[$i]->getClientOriginalName(), '.xlsx')) {
-                $path[] = Storage::putFileAs('exсel', $req->file('file')[$i], $fileName[$i]->getClientOriginalName());
+                $path[] = Storage::putFileAs('/exсel', $req->file('file')[$i], $fileName[$i]->getClientOriginalName());
             } else {
                 return view('welcome', ['files' => $files])->withErrors(['error' => 'Файлы не xlsx']);
             }

@@ -26,7 +26,7 @@ class FileHandler
         if(str_contains($inputFile[0], '.csv')){
             $name = explode('/',$file);
             $realName = $name[count($name)-1];
-            Storage::putFileAs('excel', $inputFile[0] , $realName."f".".xlsx");
+            Storage::putFileAs('/excel', $inputFile[0] , $realName."f".".xlsx");
             return true;
         }else{
             $outputFile = fopen("$file.csv", 'c+');
