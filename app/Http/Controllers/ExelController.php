@@ -116,7 +116,7 @@ class ExelController extends Controller
             }
         }
         fclose($outputFile);
-        $outputFil1e = fopen("/home/userq/exelForm/storage/app/$file" . "f" . ".xlsx", 'c+');
+        $outputFileex = fopen("/home/userq/exelForm/storage/app/$file" . "f" . ".xlsx", 'c+');
         $spreadsheetexel = IOFactory::load("/home/userq/exelForm/storage/app/$file.csv");
         $activeSheetex = $spreadsheetexel->getActiveSheet();
         $highestRow = $activeSheetex->getHighestDataRow();
@@ -126,10 +126,10 @@ class ExelController extends Controller
             for ($col = 1; $col <= $highestColumnIndex; ++$col) {
                 $value = $activeSheetex->getCellByColumnAndRow($col, $row)->getValue();
                 if (!preg_match('/\w+\.\w+\.\w+/', $value)) {
-                    fwrite($outputFil1e, "\"$value\"" . ';');
+                    fwrite($outputFileex, "\"$value\"" . ';');
 
                 }else {
-                    fwrite($outputFil1e, PHP_EOL . "\"$value\"".';');
+                    fwrite($outputFileex, PHP_EOL . "\"$value\"".';');
                 }
             }
         }
