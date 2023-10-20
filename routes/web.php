@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 */
 
 Route::get('/', function () {
-    $files = Storage::Files('/exel');
+    $files = Storage::Files('/excel');
     return view('welcome',['files' => $files]);
 });
 Route::post('/upload', '\App\Http\Controllers\ExcelController@upload');

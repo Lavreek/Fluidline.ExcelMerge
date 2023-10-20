@@ -31,7 +31,7 @@ class ExcelController extends Controller
         if(str_contains($inputFile[0], '.csv')){
             $name = explode('/',$file);
             $realName = $name[count($name)-1];
-            Storage::putFileAs('exel', $inputFile[0] , $realName."f".".xlsx");
+            Storage::putFileAs('excel', $inputFile[0] , $realName."f".".xlsx");
             return true;
         }else{
             $outputFile = fopen("$file.csv", 'c+');
@@ -94,7 +94,7 @@ class ExcelController extends Controller
     {
 
 
-        $files = Storage::Files('/exel');
+        $files = Storage::Files('/excel');
         $fileName = $req->file('file');
         if($fileName == null){
             return view('welcome', ['files' => $files])->withErrors(['error' => 'Вы ничего не отправили']);
@@ -104,7 +104,7 @@ class ExcelController extends Controller
 
         for ($i = 0; $i <= count($fileName) - 1; $i++) {
             if (str_contains($fileName[$i]->getClientOriginalName(), '.xlsx')) {
-                $path[] = Storage::putFileAs('exel', $req->file('file')[$i], $fileName[$i]->getClientOriginalName());
+                $path[] = Storage::putFileAs('exсel', $req->file('file')[$i], $fileName[$i]->getClientOriginalName());
             } else {
                 return view('welcome', ['files' => $files])->withErrors(['error' => 'Файлы не xlsx']);
             }
@@ -114,13 +114,13 @@ class ExcelController extends Controller
         } else {
             return view('welcome', ['files' => $files])->withErrors(['error' => 'ошибка при сохранении файла']);
         }
-        $megafiles = Storage::Files('/exel');
+        $megafiles = Storage::Files('/excel');
         for($i = 0;$i <=count($megafiles)-1;$i++){
             if(!str_contains($megafiles[$i], 'f.xlsx')) {
                 Storage::delete($megafiles[$i]);
             }
         }
-        $realfiles = Storage::Files('/exel');
+        $realfiles = Storage::Files('/excel');
         return view('welcome', ['files' => $realfiles])->with('success', 'файл загружен успешно');
 
     }
