@@ -11,6 +11,7 @@ class ExelController extends Controller
 {
     public function upload(Request $req)
     {
+        $files = Storage::Files('/exel');
         $fileName = $req->file('file');
         $count = count($fileName) - 1;
         $path = [];
@@ -20,15 +21,15 @@ class ExelController extends Controller
             if (str_contains($fileName[$i]->getClientOriginalName(), '.xlsx')) {
                 $path[] = Storage::putFileAs('exel', $req->file('file')[$i], $fileName[$i]->getClientOriginalName());
             } else {
-                return view('welcome')->withErrors(['error' => 'Файлы не xlsx']);
+                return view('welcome', ['files' => $files])->withErrors(['error' => 'Файлы не xlsx']);
             }
         }
         if ($path) {
              $this->convert($path);
         } else {
-            return view('welcome')->withErrors(['error' => 'ошибка при сохранении файла']);
+            return view('welcome', ['files' => $files])->withErrors(['error' => 'ошибка при сохранении файла']);
         }
-        $files = Storage::Files('/exel');
+
         for($i = 0;$i <=count($files)-1;$i++){
             if(!str_contains($files[$i], 'f.xlsx')) {
                 Storage::delete($files[$i]);
