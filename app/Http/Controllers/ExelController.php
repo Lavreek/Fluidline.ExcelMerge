@@ -15,7 +15,7 @@ class ExelController extends Controller
         $files = Storage::Files('/exel');
         $fileName = $req->file('file');
        if($fileName == null){
-           return view('welcome', ['files' => $files])->withErrors(['error' => 'вы ничего не отправили']);
+           return view('welcome', ['files' => $files])->withErrors(['error' => 'Вы ничего не отправили']);
        }
         $path = [];
 
@@ -24,7 +24,7 @@ class ExelController extends Controller
             if (str_contains($fileName[$i]->getClientOriginalName(), '.xlsx')) {
                 $path[] = Storage::putFileAs('exel', $req->file('file')[$i], $fileName[$i]->getClientOriginalName());
             } else {
-                return view('welcome', ['files' => $files])->withErrors(['error' => 'Файлы не xlsx или вы ничего не отправили']);
+                return view('welcome', ['files' => $files])->withErrors(['error' => 'Файлы не xlsx']);
             }
         }
         if ($path) {
