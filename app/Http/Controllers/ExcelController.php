@@ -37,7 +37,7 @@ class ExcelController extends Controller
 
         for ($i = 0; $i <= count($fileName) - 1; $i++) {
             if (str_contains($fileName[$i]->getClientOriginalName(), '.xlsx')) {
-                $path[] = Storage::putFileAs('/exсel', $req->file('file')[$i], $fileName[$i]->getClientOriginalName());
+                $path[] = Storage::putFileAs('excel', $req->file('file')[$i], $fileName[$i]->getClientOriginalName());
             } else {
                 return view('welcome', ['files' => $files])->withErrors(['error' => 'Файлы не xlsx']);
             }
