@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\ExcelController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,8 +16,9 @@ use Illuminate\Support\Facades\Storage;
 */
 
 Route::get('/', function () {
-    $files = Storage::Files('/excel');
-    return view('welcome',['files' => $files]);
+    return view('welcome', ['files' => Storage::Files('/excel')]);
 });
-Route::post('/upload', '\App\Http\Controllers\ExcelController@upload');
-Route::get('/Download/', '\App\Http\Controllers\ExcelController@download');
+
+Route::post('/upload',  [ExcelController::class, 'upload']);
+
+Route::get('/download', [ExcelController::class, 'download']);

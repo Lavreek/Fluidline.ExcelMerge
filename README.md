@@ -1,6 +1,12 @@
+## Requirements
++ PHP <= 8.0
++ Composer package manager
++ Node package manager
 
-## Гайд по устоновке
-1) качаем все библиотки, composer install и npm install
-2) создаём файл .env копируем .env.example и вставляем без example
-3) как только зайдете на сайт будет ошибка из-за отсутствия ключа приложения, там вам и предложат его создать,
-создаём, перезапускаем, готово.
+## Install instruction
+1) git clone "@current git repository from github@"
+2) composer install
+3) npm install
+4) npm run build
+5) cp .env.example .env
+6) php artisan key:generate
