@@ -1,6 +1,6 @@
 @extends('layouts.base')
 @section('content')
-     <h1 class="h1 mt-3" style="text-align: center">Загрузка файлов</h1>
+     <h1 class="h1 mt-3 text-center">Загрузка файлов</h1>
      <form  method="post" action="/upload" enctype="multipart/form-data">
          @csrf
          <div class="input-group row mt-3 justify-content-center">
@@ -12,12 +12,11 @@
          </div>
      </form>
      <hr>
-     <h1 class="h1"  style="text-align: center">Готовые файлы</h1>
-
+     <h1 class="h1 text-center">Готовые файлы</h1>
      <div class="row justify-content-center">
          <ul class="list-group col-5">
              @foreach($files as $file)
-                 <a class="list-group-item list-group-item-action a" href="/Download?file={{$file}}">{{ $file }}</a>
+                 <a class="list-group-item list-group-item-action a" href="/download?file={{$file}}">{{ $file }}</a>
              @endforeach
          </ul>
      </div>

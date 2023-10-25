@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
     <head>
+        @vite(['resources/css/app.css'])
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <title>Excel Merge</title>
     </head>
     <body id="body">
         <div class="container mt-5">
@@ -11,10 +12,7 @@
                     @include('err')
                     @yield('content')
                 </div>
-
             </div>
         </div>
     </body>
-
-
 </html>
