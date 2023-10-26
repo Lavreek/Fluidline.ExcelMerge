@@ -35,17 +35,13 @@ class FileHandler
         $num = 0;
         $bool = false;
 
+
         if (str_contains($inputFile[0], '.csv')) {
-            $name = explode('/', $file);
-            $realName = $name[count($name)-1];
-
-            Storage::putFileAs('excel', $inputFile[0] , $realName ."f.xlsx");
-
-            return true;
-
+            $outputFile = fopen(Storage::path('excel/').$file.'f.xlsx', 'c+');
         } else {
-            $outputFile = fopen("$file.csv", 'c+');
+            $outputFile = fopen(Storage::path('excel/').$file.'.csv', 'c+');
         }
+
 
         for ($i = 0; $i <= count($inputFile) - 1; $i++) {
             $spreadsheet = IOFactory::load($inputFile[$i]);
@@ -59,7 +55,7 @@ class FileHandler
                 for ($col = 1; $col <= $highestColumnIndex; ++$col) {
                     $value = $activeSheet->getCellByColumnAndRow($col, $row)->getValue();
 
-                    if ($row == 1 && $i == 0) {
+                    if ($row == 1 && $i == 0 or str_contains($inputFile[0], '.csv')) {
                         if (!preg_match('/\w+\.\w+\.\w+/', $value)) {
                             fwrite($outputFile, "\"$value\"" . ';');
 
@@ -100,6 +96,6 @@ class FileHandler
 
         fclose($outputFile);
 
-        return null;
+        return true;
     }
 }
