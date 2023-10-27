@@ -32,63 +32,73 @@ class FileHandler
 
     private function getTable($inputFile, $file) : ?bool
     {
-        $num = 0;
-        $bool = false;
+        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        for($i=0;$i<count($inputFile);$i++) {
+            $filename= explode('.',$inputFile[$i])[0];
 
-        $outputFile = fopen(Storage::path('excel/').$file.'.csv', 'c+');
+            $spreadsheet = $reader->load($inputFile[$i]);
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
+            $writer->setDelimiter(';');
+            $writer->setEnclosure('"');
+            $writer->setLineEnding("\r\n");
+            $writer->setSheetIndex(0);
+            $writer->save($inputFile[$i].".csv");
 
-        for ($i = 0; $i <= count($inputFile) - 1; $i++) {
-            $spreadsheet = IOFactory::load($inputFile[$i]);
-            $name = explode('/',$inputFile[$i]);
-            $realName = $name[count($name)-1];
-            $activeSheet = $spreadsheet->getActiveSheet();
-            $highestRow = $activeSheet->getHighestDataRow();
-            $highestColumn = $activeSheet->getHighestDataColumn();
-            $highestColumnIndex = Coordinate::columnIndexFromString($highestColumn);
-            for ($row = 1; $row <= $highestRow; ++$row) {
-                for ($col = 1; $col <= $highestColumnIndex; ++$col) {
-                    $value = $activeSheet->getCellByColumnAndRow($col, $row)->getValue();
-
-                    if ($row == 1 && $i == 0 or str_contains($inputFile[0], '.csv')) {
-                        if (!preg_match('/\w+\.\w+\.\w+/', $value)) {
-                            fwrite($outputFile, "\"$value\"" . ';');
-
-                        } else {
-                            fwrite($outputFile, PHP_EOL . "\"$value\"" . ';');
-                        }
-                    } else {
-                        if (!$bool) {
-                            if (preg_match('/\w+\.\w+\.\w+/', $value)) {
-                                if ($i >= 0) {
-                                    fwrite($outputFile, PHP_EOL . "\"$value\"" . ';');
-                                    $bool = true;
-                                }
-                            }
-                        } else {
-                            $num++;
-
-                            if ($num >= 17) {
-                                $num = 0;
-                                $bool = false;
-                            }
-
-                            if (!preg_match('/\w+\.\w+\.\w+/', $value)) {
-                                if ($col == 5 && $row != 1){
-                                    fwrite($outputFile, "\"$realName\";");
-
-                                } else {
-                                    fwrite($outputFile, "\"$value\";");
-                                }
-                            } else {
-                                fwrite($outputFile, PHP_EOL . "\"$value\";");
-                            }
-                        }
-                    }
-                }
+        }
+        $filearr  = Storage::files('excel');
+        $filecsv = [];
+        foreach ($filearr as $File){
+            if(str_contains($File, '.csv')){
+            $filecsv[] = $File;
             }
         }
+        $arr = [];
+        for ($i=0;$i<count($filecsv);$i++) {
 
-        fclose($outputFile);
+            $readercsv = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
+            $realfile = Storage::path($filecsv[$i]);
+            $readercsv->setDelimiter(';');
+            $readercsv->setEnclosure('"');
+            $encoding = \PhpOffice\PhpSpreadsheet\Reader\Csv::guessEncoding($realfile);
+            $readercsv->setInputEncoding($encoding);
+
+            $spreadsheet = $readercsv->load($realfile);
+            $arr[]= $spreadsheet;
+        }
+        $rowarr= [];
+        foreach ($arr as $ar){
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($ar);
+            $writer->setDelimiter(';');
+            $writer->setEnclosure('"');
+            $writer->setLineEnding("\r\n");
+            $rowarr[]= $ar->getActiveSheet()->toArray();
+        }
+
+        $arr1 = [];
+        $firstiter = true;
+        foreach ($rowarr as $row1){
+            $count = 0;
+            foreach ($row1 as $row2){
+                if(in_array('Дата подписки',$row2)) {
+                    if ($firstiter) {
+                        $arr1[] = $row2;
+                        $firstiter = false;
+                    }
+                    continue;
+                }
+                $val = explode('/',$inputFile[$count]);
+                $row2[4] = $val[count($val)-1];
+                $arr1[]= $row2;
+            }
+            $count++;
+        }
+        $arr[0]->getActiveSheet()->fromArray($arr1);
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($arr[0]);
+        $writer->setDelimiter(';');
+        $writer->setEnclosure('"');
+        $writer->setLineEnding("\r\n");
+        $writer->setSheetIndex(0);
+        $writer->save(explode('.',$inputFile[0])[0].".csv");
 
         return true;
     }
@@ -97,6 +107,7 @@ class FileHandler
 
         $file = explode('.', $inputFile)[0];
         $realfile = Storage::path('/excel/'.$inputFile);
+
         $reader->setDelimiter(';');
         $reader->setEnclosure('"');
         $encoding = \PhpOffice\PhpSpreadsheet\Reader\Csv::guessEncoding($realfile);
