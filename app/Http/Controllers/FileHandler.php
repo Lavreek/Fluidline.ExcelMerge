@@ -25,7 +25,7 @@ class FileHandler
         $file = $fileinfo['filename'];
 
         $this->getTable($inputFile, $file);
-        $this->getTable(["$file.csv"], $file);
+        $this->toXlsx("$file.csv");
 
         return null;
     }
@@ -35,14 +35,7 @@ class FileHandler
         $num = 0;
         $bool = false;
 
-
-        if (str_contains($inputFile[0], '.csv')) {
-            $outputFile = fopen(Storage::path('excel/').$file.'f.xlsx', 'c+');
-            $inputFile[0] = Storage::path('/excel/'.$inputFile[0]);
-        } else {
-            $outputFile = fopen(Storage::path('excel/').$file.'.csv', 'c+');
-        }
-
+        $outputFile = fopen(Storage::path('excel/').$file.'.csv', 'c+');
 
         for ($i = 0; $i <= count($inputFile) - 1; $i++) {
             $spreadsheet = IOFactory::load($inputFile[$i]);
@@ -98,5 +91,23 @@ class FileHandler
         fclose($outputFile);
 
         return true;
+    }
+    private function toXlsx($inputFile) {
+        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
+
+        $file = explode('.', $inputFile)[0];
+        $realfile = Storage::path('/excel/'.$inputFile);
+        $reader->setDelimiter(';');
+        $reader->setEnclosure('"');
+        $encoding = \PhpOffice\PhpSpreadsheet\Reader\Csv::guessEncoding($realfile);
+        $reader->setInputEncoding($encoding);
+
+        $spreadsheet = $reader->load($realfile);
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $writer->save(Storage::path('excel/').$file.'f.xlsx');
+
+        return null;
+
     }
 }
