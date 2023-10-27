@@ -38,6 +38,7 @@ class FileHandler
 
         if (str_contains($inputFile[0], '.csv')) {
             $outputFile = fopen(Storage::path('excel/').$file.'f.xlsx', 'c+');
+            $inputFile[0] = Storage::path('/excel/'.$inputFile[0]);
         } else {
             $outputFile = fopen(Storage::path('excel/').$file.'.csv', 'c+');
         }
