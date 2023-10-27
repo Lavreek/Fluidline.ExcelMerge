@@ -24,24 +24,20 @@ class FileHandler
 
         $file = $fileinfo['filename'];
 
-        $this->getTable($inputFile, $file);
+        $this->getTable($inputFile);
         $this->toXlsx("$file.csv");
 
         return null;
     }
 
-    private function getTable($inputFile, $file) : ?bool
+    private function getTable($inputFile) : ?bool
     {
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
         for($i=0;$i<count($inputFile);$i++) {
-            $filename= explode('.',$inputFile[$i])[0];
 
             $spreadsheet = $reader->load($inputFile[$i]);
             $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
             $writer->setDelimiter(';');
-            $writer->setEnclosure('"');
-            $writer->setLineEnding("\r\n");
-            $writer->setSheetIndex(0);
             $writer->save($inputFile[$i].".csv");
 
         }
@@ -73,8 +69,6 @@ class FileHandler
             foreach ($rowarr as &$row){
                 $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($ar);
                             $writer->setDelimiter(';');
-                            $writer->setEnclosure('"');
-                            $writer->setLineEnding("\r\n");
                             $row= $ar->getActiveSheet()->toArray();
             }
 
@@ -84,7 +78,7 @@ class FileHandler
         $firstiter = true;
         foreach ($rowarr as $key=> $row1){
 
-            foreach ($row1 as $key1=> $row2){
+            foreach ($row1 as $row2){
                 if(in_array('Дата подписки',$row2)) {
                     if ($firstiter) {
                         $arr1[] = $row2;
@@ -100,8 +94,6 @@ class FileHandler
         $arr[array_key_first($arr)]->getActiveSheet()->fromArray($arr1);
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($arr[array_key_first($arr)]);
         $writer->setDelimiter(';');
-        $writer->setEnclosure('"');
-        $writer->setLineEnding("\r\n");
         $writer->setSheetIndex(0);
         $writer->save(explode('.',$inputFile[0])[0].".csv");
 
