@@ -49,10 +49,11 @@ class FileHandler
         $filecsv = [];
         foreach ($filearr as $File){
             if(str_contains($File, '.csv')){
-            $filecsv[] = $File;
+                $filecsv[] = $File;
             }
         }
         $arr = [];
+        $rowarr =[];
         for ($i=0;$i<count($filecsv);$i++) {
 
             $readercsv = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
@@ -63,22 +64,27 @@ class FileHandler
             $readercsv->setInputEncoding($encoding);
 
             $spreadsheet = $readercsv->load($realfile);
-            $arr[]= $spreadsheet;
+            $arr[explode('/',$filecsv[$i])[1]]= $spreadsheet;
+            $rowarr[explode('/',$filecsv[$i])[1]]= '';
         }
-        $rowarr= [];
+
+
         foreach ($arr as $ar){
-            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($ar);
-            $writer->setDelimiter(';');
-            $writer->setEnclosure('"');
-            $writer->setLineEnding("\r\n");
-            $rowarr[]= $ar->getActiveSheet()->toArray();
+            foreach ($rowarr as &$row){
+                $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($ar);
+                            $writer->setDelimiter(';');
+                            $writer->setEnclosure('"');
+                            $writer->setLineEnding("\r\n");
+                            $row= $ar->getActiveSheet()->toArray();
+            }
+
         }
 
         $arr1 = [];
         $firstiter = true;
-        foreach ($rowarr as $row1){
-            $count = 0;
-            foreach ($row1 as $row2){
+        foreach ($rowarr as $key=> $row1){
+
+            foreach ($row1 as $key1=> $row2){
                 if(in_array('Дата подписки',$row2)) {
                     if ($firstiter) {
                         $arr1[] = $row2;
@@ -86,14 +92,13 @@ class FileHandler
                     }
                     continue;
                 }
-                $val = explode('/',$inputFile[$count]);
-                $row2[4] = $val[count($val)-1];
+                $row2[4] = $key;
                 $arr1[]= $row2;
             }
-            $count++;
+
         }
-        $arr[0]->getActiveSheet()->fromArray($arr1);
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($arr[0]);
+        $arr[array_key_first($arr)]->getActiveSheet()->fromArray($arr1);
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($arr[array_key_first($arr)]);
         $writer->setDelimiter(';');
         $writer->setEnclosure('"');
         $writer->setLineEnding("\r\n");
