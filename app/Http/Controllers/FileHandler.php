@@ -29,7 +29,6 @@ class FileHandler
 
         return null;
     }
-
     private function getTable($inputFile) : ?bool
     {
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
@@ -38,7 +37,7 @@ class FileHandler
             $spreadsheet = $reader->load($inputFile[$i]);
             $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
             $writer->setDelimiter(';');
-            $writer->save($inputFile[$i].".csv");
+            $writer->save(explode('.',$inputFile[$i])[0].".csv");
 
         }
         $filearr  = Storage::files('excel');
@@ -61,17 +60,7 @@ class FileHandler
 
             $spreadsheet = $readercsv->load($realfile);
             $arr[explode('/',$filecsv[$i])[1]]= $spreadsheet;
-            $rowarr[explode('/',$filecsv[$i])[1]]= '';
-        }
-
-
-        foreach ($arr as $ar){
-            foreach ($rowarr as &$row){
-                $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($ar);
-                            $writer->setDelimiter(';');
-                            $row= $ar->getActiveSheet()->toArray();
-            }
-
+            $rowarr[explode('/',$filecsv[$i])[1]]= $spreadsheet->getActiveSheet()->toArray() ;
         }
 
         $arr1 = [];
@@ -99,6 +88,7 @@ class FileHandler
 
         return true;
     }
+
     private function toXlsx($inputFile) {
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
 
