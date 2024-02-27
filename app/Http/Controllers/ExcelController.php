@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use function Psy\debug;
 
 class ExcelController extends Controller
 {
@@ -16,13 +17,13 @@ class ExcelController extends Controller
         return Storage::download($value);
     }
 
-    public function upload(Request $req) : View
+    public function upload(Request $request) : View
     {
         $file = new FileHandler();
 
         $files = Storage::Files('/excel');
 
-        $fileName = $req->file('file');
+        $fileName = $request->file('file');
 
         if ($fileName == null) {
             return view('welcome', ['files' => $files])->withErrors(['error' => 'Вы ничего не отправили']);
@@ -31,13 +32,21 @@ class ExcelController extends Controller
         $path = [];
 
         for ($i = 0; $i <= count($fileName) - 1; $i++) {
-            if (str_contains($fileName[$i]->getClientOriginalName(), '.xlsx')) {
-                $path[] = Storage::putFileAs(
-                    'excel', $req->file('file')[$i], $fileName[$i]->getClientOriginalName()
-                );
+            $fileinfo = pathinfo($fileName[$i]->getClientOriginalName());
 
-            } else {
-                return view('welcome', ['files' => $files])->withErrors(['error' => 'Файлы не xlsx']);
+            if (isset($fileinfo['extension'])) {
+                switch ($fileinfo['extension']) {
+                    case 'xlsx' : {
+                        $path[] = Storage::putFileAs(
+                            'excel', $request->file('file')[$i], $fileName[$i]->getClientOriginalName()
+                        );
+                        break;
+                    }
+
+                    default : {
+                        return view('welcome', ['files' => $files])->withErrors(['error' => 'Файлы не xlsx']);
+                    }
+                }
             }
         }
 
